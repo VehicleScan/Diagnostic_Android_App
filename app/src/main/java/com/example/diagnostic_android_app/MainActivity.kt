@@ -1,24 +1,32 @@
 package com.example.diagnostic_android_app
 
+import android.graphics.Color
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.view.Gravity
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import com.github.anastr.speedviewlib.AwesomeSpeedometer
-import com.github.anastr.speedviewlib.SpeedView
+
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
 
-        val rpmGauge: AwesomeSpeedometer = findViewById(R.id.rpmGauge)
-        val oilTempGauge: SpeedView = findViewById(R.id.oilTempGauge)
-        val tirePressureGauge: SpeedView = findViewById(R.id.tirePressureGauge)
+        val layout = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+            setBackgroundColor(Color.BLACK)
+        }
 
-        // Simulated "normal" sensor values
-        rpmGauge.speedTo(2200f)
-        oilTempGauge.speedTo(95f)
-        tirePressureGauge.speedTo(2.5f)
+        val gauge = GaugeView(this).apply {
+            layoutParams = LinearLayout.LayoutParams(600, 600)
+            setMaxValue(7000f)
+            setUnit("RPM")
+            setValue(2200f)
+        }
+
+        layout.addView(gauge)
+        setContentView(layout)
+
     }
+
 }

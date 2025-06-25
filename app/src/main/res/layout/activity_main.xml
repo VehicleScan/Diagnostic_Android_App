@@ -1,37 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:gravity="center"
-    android:background="#0A1B2B">
+    android:background="#000000"
+    tools:context=".MainActivity">
 
-    <!-- RPM Gauge -->
-    <com.github.anastr.speedviewlib.AwesomeSpeedometer
+    <!-- Your custom gauge -->
+    <com.example.diagnostic_android_app.GaugeView
         android:id="@+id/rpmGauge"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        app:sv_maxSpeed="7000"
-        app:sv_unit="RPM"
-        app:sv_withTremble="false"
-        app:sv_speedTextSize="12sp"
-        app:sv_unitTextSize="10sp" />
-
-    <!-- Oil Temperature -->
-    <com.github.anastr.speedviewlib.SpeedView
-        android:id="@+id/oilTempGauge"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        app:sv_maxSpeed="150"
-        app:sv_unit="°C"
-        app:sv_withTremble="false" />
-
-    <!-- Tire Pressure -->
-    <com.github.anastr.speedviewlib.SpeedView
-        android:id="@+id/tirePressureGauge"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        app:sv_maxSpeed="4"
-        app:sv_unit="bar"
-        app:sv_withTremble="false" />
+        android:layout_width="300dp"
+        android:layout_height="300dp" />
 </LinearLayout>

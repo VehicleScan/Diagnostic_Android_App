@@ -33,9 +33,27 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+//    buildFeatures {
+//        compose = true
+//    }
+//
+//    composeOptions {
+//        kotlinCompilerExtensionVersion = "1.5.11"
+//    }
 }
+
+
 dependencies {
     implementation ("com.github.anastr:speedviewlib:1.6.1")
+    val composeBom = platform("androidx.compose:compose-bom:2024.02.01")
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

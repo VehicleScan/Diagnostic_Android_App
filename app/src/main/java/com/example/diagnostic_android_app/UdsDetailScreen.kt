@@ -7,6 +7,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
@@ -22,5 +23,13 @@ fun UdsDetailScreen(item: UdsItem, navController: NavController? = null) {
         Button(onClick = { navController?.navigateUp() }) {
             Text("Back")
         }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 1000, heightDp = 600)
+@Composable
+fun UdsDetailScreenPreview() {
+    MaterialTheme {
+        UdsDetailScreen(UdsItem(0,"name","details"))
     }
 }

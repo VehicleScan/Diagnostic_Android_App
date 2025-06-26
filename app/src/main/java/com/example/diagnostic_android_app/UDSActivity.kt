@@ -9,12 +9,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
 
-// A simple data model
-data class UdsItem(val id: Int, val name: String, val details: String)
 
 class UDSActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +26,7 @@ class UDSActivity : ComponentActivity() {
         }
     }
 }
+@Preview(showBackground = true, widthDp = 1000, heightDp = 600)
 
 @Composable
 fun UdsNavHost() {

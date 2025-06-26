@@ -45,7 +45,7 @@ android {
 
 
 dependencies {
-    // In your module build.gradle.kts
+    implementation ("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.compose:compose-bom:2025.05.00")
     androidTestImplementation("androidx.compose:compose-bom:2025.05.00")
     implementation("androidx.compose.ui:ui")

@@ -1,10 +1,10 @@
-// UDSActivity.kt
 package com.example.diagnostic_android_app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -14,8 +14,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
 
-
-class UDSActivity : ComponentActivity() {
+class UDSActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -24,39 +23,43 @@ class UDSActivity : ComponentActivity() {
                 UdsNavHost()
             }
         }
+        // Enable the Up button in the action bar
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }
-@Preview(showBackground = true, widthDp = 1000, heightDp = 600)
 
+@Preview(showBackground = true, widthDp = 1000, heightDp = 600)
 @Composable
 fun UdsNavHost() {
     val navController = rememberNavController()
-    NavHost(navController, startDestination = "list") {
+    NavHost(navController = navController, startDestination = "list") {
         composable("list") {
-            UdsListScreen(
-                items = listOf(
-                    UdsItem(1, "Item One", "Details for item one…"),
-                    UdsItem(2, "Item Two", "Here are the details for item two…"),
-                    UdsItem(3, "Item Three", "More info about item three…")
-                ),
-                onItemClick = { id ->
-                    navController.navigate("detail/$id")
-                }
+            val items = listOf(
+                UdsItem(1, "Speed Sensor", "Monitors the speed of the vehicle."),
+                UdsItem(2, "Oil Temp Sensor", "Tracks engine oil temperature."),
+                UdsItem(3, "MAF Sensor", "Measures mass air flow into the engine.")
             )
+            UdsListScreen(items) { selectedId ->
+                navController.navigate("detail/$selectedId")
+            }
         }
         composable(
-            "detail/{itemId}",
+            route = "detail/{itemId}",
             arguments = listOf(navArgument("itemId") { type = NavType.IntType })
-        ) { backStack ->
-            val itemId = backStack.arguments!!.getInt("itemId")
-            val item = remember { // lookup from your data source
-                listOf(
-                    UdsItem(1, "Item One", "Details for item one…"),
-                    UdsItem(2, "Item Two", "Here are the details for item two…"),
-                    UdsItem(3, "Item Three", "More info about item three…")
-                ).first { it.id == itemId }
-            }
-            UdsDetailScreen(item)
+        ) { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getInt("itemId") ?: return@composable
+            val item = listOf(
+                UdsItem(1, "Speed Sensor", "Monitors the speed of the vehicle."),
+                UdsItem(2, "Oil Temp Sensor", "Tracks engine oil temperature."),
+                UdsItem(3, "MAF Sensor", "Measures mass air flow into the engine.")
+            ).firstOrNull { it.id == itemId }
+
+            item?.let { UdsDetailScreen(it, navController) }
         }
     }
 }

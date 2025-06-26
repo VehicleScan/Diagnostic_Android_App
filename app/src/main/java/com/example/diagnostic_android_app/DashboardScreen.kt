@@ -28,11 +28,12 @@ fun DashboardGauge() {
     var tirePressure by remember { mutableStateOf(32f) }
     var massAirFlow by remember { mutableStateOf(5f) }
 
-    val scrollState = rememberScrollState()
     val context = LocalContext.current
+    val scrollState = rememberScrollState()
+    // Auto-random updates for demo
     LaunchedEffect(Unit) {
         while (true) {
-            delay(1000) // Update every 1 second
+            delay(1000)
             speed = (40..140).random().toFloat()
             rpm = (1000..7000).random().toFloat()
             oilTemp = (70..120).random().toFloat()
@@ -44,13 +45,14 @@ fun DashboardGauge() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF1A1F2E))
             .verticalScroll(scrollState)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
+            .background(Color(0xFF121820)) // darker automotive background
+            .padding(WindowInsets.systemBars.asPaddingValues()) // avoid status/nav bar
+            .padding(horizontal = 24.dp, vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // First Row: Speed, RPM
+        // Row 1: Speed, RPM
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -59,7 +61,7 @@ fun DashboardGauge() {
             GaugeItem("RPM", 8000, rpm, "RPM")
         }
 
-        // Second Row: Oil Temp, Tire Pressure
+        // Row 2: Oil Temp, Tire Pressure
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -68,13 +70,15 @@ fun DashboardGauge() {
             GaugeItem("Tire Pressure", 50, tirePressure, "psi")
         }
 
-        // Third Row: Mass Air Flow
+        // Row 3: Mass Air Flow
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
             GaugeItem("Mass Air Flow", 20, massAirFlow, "g/s")
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
@@ -83,12 +87,13 @@ fun DashboardGauge() {
             },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00BFFF))
         ) {
-            Text("Go to Details", color = Color.White, fontSize = 16.sp)
+            Text("Go to Details", color = Color.White, fontSize = 20.sp)
         }
-        Spacer(modifier = Modifier.height(40.dp))
 
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
+
 
 @Composable
 fun GaugeItem(
@@ -101,16 +106,17 @@ fun GaugeItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .padding(8.dp)
-            .width(220.dp)
+            .width(340.dp)
     ) {
         Text(
             text = label,
-            color = Color.White,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
+            color = Color.LightGray,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.SemiBold
         )
+
         Box(
-            modifier = Modifier.size(200.dp),
+            modifier = Modifier.size(340.dp),
             contentAlignment = Alignment.Center
         ) {
             SpeedometerComposeView(
@@ -119,7 +125,7 @@ fun GaugeItem(
                 needleColor = Color(0xFF00BFFF),
                 speedTextColor = Color.White,
                 movingSpeedTextColor = Color.White,
-                arcWidth = 25f, // Increased for bolder look
+                arcWidth = 32f,
                 speedometerMode = Mode.GLOW,
                 glowMulticolor = true,
                 glowSingleColor = when (label) {
@@ -128,20 +134,21 @@ fun GaugeItem(
                     "Mass Air Flow" -> Color.Magenta
                     else -> Color.Red
                 },
-                glowRadius = 35f, // Increased for stronger glow
+                glowRadius = 42f,
                 glowSpeedPoints = true,
-                baseArcColorConstant = Color(0xFF2A2A2A) // Slightly lighter for contrast
+                baseArcColorConstant = Color(0xFF2A2A2A)
             )
         }
+
         Text(
             text = "${value.toInt()} $unit",
             color = Color.White,
-            fontSize = 18.sp,
+            fontSize = 32.sp,
             fontWeight = FontWeight.Bold
         )
-
     }
 }
+
 
 @Preview(showBackground = true, widthDp = 1000, heightDp = 600)
 @Composable

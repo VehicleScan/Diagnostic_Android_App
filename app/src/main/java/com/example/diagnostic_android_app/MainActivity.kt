@@ -5,15 +5,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -32,6 +29,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import android.content.Intent
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.platform.LocalContext
+
 import com.ramzmania.speedometercomposeview.SpeedometerComposeView
 import com.ramzmania.speedometercomposeview.Mode
 
@@ -57,40 +59,54 @@ fun DashboardGauge() {
     var tirePressure by remember { mutableStateOf(32f) }
     var massAirFlow by remember { mutableStateOf(5f) }
 
-    // Horizontal scroll
+    // Vertical scroll state
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF1A1F2E))
-            .padding(16.dp)
-            .horizontalScroll(scrollState),
-        verticalArrangement = Arrangement.SpaceEvenly,
+            .verticalScroll(scrollState)      // <-- vertical scroll here
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // First Row: Speed, RPM, Oil Temp
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            GaugeItem("Speed", 220, speed) { newValue -> speed = newValue }
-            GaugeItem("RPM", 8000, rpm) { newValue -> rpm = newValue }
-            GaugeItem("Oil Temp", 150, oilTemp) { newValue -> oilTemp = newValue }
+            GaugeItem("Speed", 220, speed) { speed = it }
+            GaugeItem("RPM", 8000, rpm) { rpm = it }
+            GaugeItem("Oil Temp", 150, oilTemp) { oilTemp = it }
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
 
         // Second Row: Tire Pressure, Mass Air Flow
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            GaugeItem("Tire Pressure", 50, tirePressure) { newValue -> tirePressure = newValue }
-            GaugeItem("Mass Air Flow", 20, massAirFlow) { newValue -> massAirFlow = newValue }
+            GaugeItem("Tire Pressure", 50, tirePressure) { tirePressure = it }
+            GaugeItem("Mass Air Flow", 20, massAirFlow) { massAirFlow = it }
+        }
+
+        // Button to launch another activity
+        Button(
+            onClick = {
+                val intent = Intent(context, UDSActivity::class.java)
+                context.startActivity(intent)
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00BFFF))
+        ) {
+            Text("Go to Details", color = Color.White, fontSize = 16.sp)
         }
     }
 }
+
+
 
 @Composable
 fun GaugeItem(

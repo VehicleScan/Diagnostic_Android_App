@@ -45,6 +45,13 @@ android {
 
 
 dependencies {
+    // In your module build.gradle.kts
+    implementation(platform("androidx.compose:compose-bom:2024.06.00"))  // or newer
+    implementation("androidx.compose.ui:ui")               // BOM will pick a fixed 1.5.x version
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.navigation:navigation-compose:2.7.0")
+    implementation("androidx.compose.material3:material3:1.1.1")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.9.0")

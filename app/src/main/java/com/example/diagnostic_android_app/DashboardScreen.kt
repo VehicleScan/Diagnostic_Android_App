@@ -1,4 +1,4 @@
-package com.example.diagnostic_android_app
+package com.example.diagnostic_android_app.ui
 
 import android.content.Intent
 import androidx.compose.foundation.background
@@ -15,8 +15,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.diagnostic_android_app.UDSActivity
 import com.ramzmania.speedometercomposeview.Mode
 import com.ramzmania.speedometercomposeview.SpeedometerComposeView
+import kotlinx.coroutines.delay
 
 @Composable
 fun DashboardGauge() {
@@ -28,6 +30,16 @@ fun DashboardGauge() {
 
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(1000) // Update every 1 second
+            speed = (40..140).random().toFloat()
+            rpm = (1000..7000).random().toFloat()
+            oilTemp = (70..120).random().toFloat()
+            tirePressure = (28..36).random().toFloat()
+            massAirFlow = (3..10).random().toFloat()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -38,21 +50,30 @@ fun DashboardGauge() {
         verticalArrangement = Arrangement.spacedBy(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // First Row: Speed, RPM
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            GaugeItem("Speed", 220, speed) { speed = it }
-            GaugeItem("RPM", 8000, rpm) { rpm = it }
-            GaugeItem("Oil Temp", 150, oilTemp) { oilTemp = it }
+            GaugeItem("Speed", 220, speed, "km/h")
+            GaugeItem("RPM", 8000, rpm, "RPM")
         }
 
+        // Second Row: Oil Temp, Tire Pressure
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            GaugeItem("Tire Pressure", 50, tirePressure) { tirePressure = it }
-            GaugeItem("Mass Air Flow", 20, massAirFlow) { massAirFlow = it }
+            GaugeItem("Oil Temp", 150, oilTemp, "°C")
+            GaugeItem("Tire Pressure", 50, tirePressure, "psi")
+        }
+
+        // Third Row: Mass Air Flow
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            GaugeItem("Mass Air Flow", 20, massAirFlow, "g/s")
         }
 
         Button(
@@ -64,6 +85,8 @@ fun DashboardGauge() {
         ) {
             Text("Go to Details", color = Color.White, fontSize = 16.sp)
         }
+        Spacer(modifier = Modifier.height(40.dp))
+
     }
 }
 
@@ -72,7 +95,7 @@ fun GaugeItem(
     label: String,
     maxRange: Int,
     value: Float,
-    onValueChange: (Float) -> Unit
+    unit: String
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -86,7 +109,6 @@ fun GaugeItem(
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
         )
-
         Box(
             modifier = Modifier.size(200.dp),
             contentAlignment = Alignment.Center
@@ -97,7 +119,7 @@ fun GaugeItem(
                 needleColor = Color(0xFF00BFFF),
                 speedTextColor = Color.White,
                 movingSpeedTextColor = Color.White,
-                arcWidth = 20f,
+                arcWidth = 25f, // Increased for bolder look
                 speedometerMode = Mode.GLOW,
                 glowMulticolor = true,
                 glowSingleColor = when (label) {
@@ -106,11 +128,18 @@ fun GaugeItem(
                     "Mass Air Flow" -> Color.Magenta
                     else -> Color.Red
                 },
-                glowRadius = 30f,
+                glowRadius = 35f, // Increased for stronger glow
                 glowSpeedPoints = true,
-                baseArcColorConstant = Color(0xFF1A1A1A)
+                baseArcColorConstant = Color(0xFF2A2A2A) // Slightly lighter for contrast
             )
         }
+        Text(
+            text = "${value.toInt()} $unit",
+            color = Color.White,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold
+        )
+
     }
 }
 

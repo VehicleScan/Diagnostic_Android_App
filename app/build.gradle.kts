@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.ir.backend.js.compile
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -45,6 +47,8 @@ android {
 
 
 dependencies {
+    implementation("com.github.rameshvoltella:SpeedometerComposeView:3.0.0")
+    implementation("androidx.compose.material:material-icons-extended")
     implementation ("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.compose:compose-bom:2025.05.00")
     androidTestImplementation("androidx.compose:compose-bom:2025.05.00")
@@ -64,7 +68,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.9.0")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")

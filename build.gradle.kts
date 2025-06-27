@@ -4,10 +4,3 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
 }
 
-//allprojects {
-//    repositories {
-//        google()
-//        mavenCentral()
-//        maven { url "https://jitpack.io" } // Required for JitPack dependencies
-//    }
-//}

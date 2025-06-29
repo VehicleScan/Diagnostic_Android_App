@@ -4,6 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
+
 val Purple700 = Color(0xFF3700B3)
 val Teal200 = Color(0xFF03DAC5)
 val Pink = Color(0xFFE2437E)
@@ -22,7 +23,13 @@ val GreenGradient = Brush.linearGradient(
     start = Offset(0f, 0f),
     end = Offset(Float.POSITIVE_INFINITY, 0f)
 )
-
+val BlueGradient = Brush.linearGradient(
+    colors = listOf(
+        Color(0xFF00F0FF), // Cyan-like start
+        Color(0xFF4A90E2)  // Blue-like end
+    )
+)
+val BlueSoftColor = Color(0xFF00F0FF)
 val DarkGradient = Brush.verticalGradient(
     colors = listOf(DarkColor2, DarkColor)
 )

@@ -1,6 +1,9 @@
 package com.example.diagnostic_android_app
 
 import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material3.Icon
 import android.graphics.Typeface
 import androidx.compose.foundation.Canvas
@@ -11,6 +14,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -47,6 +52,44 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
+
+@Composable
+fun DashboardScreen() {
+    var selectedItem by remember { mutableStateOf(0) }
+    val items = listOf("Dashboard", "Settings", "Profile")
+    val icons = listOf(Icons.Default.Dashboard, Icons.Default.Settings, Icons.Default.Person)
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        // Main content based on selected item
+        when (selectedItem) {
+            0 -> DualGauge(modifier = Modifier.weight(1f))
+            1 -> SettingsScreen()
+            2 -> ProfileScreen()
+        }
+
+        // Navigation bar
+        BottomNavigation(
+            backgroundColor = Color.DarkGray,
+            contentColor = Color.White
+        ) {
+            items.forEachIndexed { index, item ->
+                BottomNavigationItem(
+                    icon = { Icon(icons[index], contentDescription = item) },
+                    label = { Text(item) },
+                    selected = selectedItem == index,
+                    onClick = { selectedItem = index },
+                    selectedContentColor = Color.White,
+                    unselectedContentColor = Color.Gray
+                )
+            }
+        }
+    }
+}
 
 @Composable
 fun DualGauge(
@@ -329,14 +372,43 @@ fun DrawScope.drawSpeedometer(value: Float) {
     )
 }
 
+@Composable
+fun SettingsScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Settings Screen",
+            color = Color.White,
+            fontSize = 24.sp
+        )
+    }
+}
+
+@Composable
+fun ProfileScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Profile Screen",
+            color = Color.White,
+            fontSize = 24.sp
+        )
+    }
+}
+
 @Preview(showBackground = true, widthDp = 800, heightDp = 400)
 @Composable
 fun DualGaugePreview() {
-    DualGauge(
-        initialTachometerValue = 45f,
-        initialSpeedometerValue = 180f
-    )
+    DashboardScreen()
 }
 
 // Extension function for Kotlin math
-fun Math.toRadians(degrees: Double): Double = degrees * PI / 180
+//fun Math.toRadians(degrees: Double): Double = degrees * PI / 180

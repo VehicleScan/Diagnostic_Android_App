@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">Diagnostic_Android_App</string>
+    <string name="app_name">Vehicle Scan</string>
     <string name="title_activity_udsactivity">UDSActivity</string>
 </resources>

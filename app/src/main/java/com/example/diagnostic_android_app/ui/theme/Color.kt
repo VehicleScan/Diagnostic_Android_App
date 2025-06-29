@@ -5,6 +5,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 
+val AppPrimary       = Color(0xFF4A90E2) // new primary
+val AppPrimaryLight  = Color(0xFF70A9E7)
+val AppPrimaryDark   = Color(0xFF357ABD)
+val AppOnPrimary     = Color.White
+
+val DarkBackground   = Color(0xFF1A1F2E)
+
 val Purple700 = Color(0xFF3700B3)
 val Teal200 = Color(0xFF03DAC5)
 val Pink = Color(0xFFE2437E)

@@ -40,9 +40,9 @@ fun UdsNavHost() {
     NavHost(navController = navController, startDestination = "list") {
         composable("list") {
             val items = listOf(
-                UdsItem(1, "Speed Sensor", "Monitors the speed of the vehicle."),
-                UdsItem(2, "Oil Temp Sensor", "Tracks engine oil temperature."),
-                UdsItem(3, "MAF Sensor", "Measures mass air flow into the engine.")
+                UdsItem(1, "Speed Sensor",    "Monitors speed",    R.drawable.carspeed1),
+                UdsItem(2, "Oil Temp Sensor", "Tracks oil temp",   R.drawable.thermometer1),
+                UdsItem(3, "MAF Sensor",      "Measures airflow",  R.drawable.airflow1)
             )
             UdsListScreen(items) { selectedId ->
                 navController.navigate("detail/$selectedId")
@@ -54,12 +54,12 @@ fun UdsNavHost() {
         ) { backStackEntry ->
             val itemId = backStackEntry.arguments?.getInt("itemId") ?: return@composable
             val item = listOf(
-                UdsItem(1, "Speed Sensor", "Monitors the speed of the vehicle."),
-                UdsItem(2, "Oil Temp Sensor", "Tracks engine oil temperature."),
-                UdsItem(3, "MAF Sensor", "Measures mass air flow into the engine.")
+                UdsItem(1, "Speed Sensor",    "Monitors speed",    R.drawable.carspeed1),
+                UdsItem(2, "Oil Temp Sensor", "Tracks oil temp",   R.drawable.thermometer1),
+                UdsItem(3, "MAF Sensor",      "Measures airflow",  R.drawable.airflow1)
             ).firstOrNull { it.id == itemId }
 
-            item?.let { UdsDetailScreen(it, navController) }
+//            item?.let { UdsDetailScreen(it, navController) }
         }
     }
 }

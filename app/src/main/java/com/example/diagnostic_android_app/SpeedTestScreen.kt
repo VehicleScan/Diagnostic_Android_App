@@ -140,7 +140,7 @@ fun NavigationView(
                 selected = index == selectedItem,
                 onClick = { onItemSelected(index) },
                 selectedContentColor = BlueSoftColor,
-                unselectedContentColor = MaterialTheme.colors.onSurface,
+                unselectedContentColor = Color.LightGray,
                 icon = {
                     Icon(painterResource(id = item), contentDescription = null)
                 }

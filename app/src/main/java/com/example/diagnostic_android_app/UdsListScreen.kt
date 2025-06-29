@@ -11,6 +11,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,61 +24,82 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import com.example.diagnostic_android_app.ui.theme.BlueSoftColor
+import com.example.diagnostic_android_app.ui.theme.ComposeSpeedTestTheme
+import com.example.diagnostic_android_app.ui.theme.DarkColor
+
 
 @Composable
-fun UdsListScreen(items: List<UdsItem>, onItemClick: (Int) -> Unit) {
-    val context = LocalContext.current
-    Column(
-        modifier = Modifier
+fun UdsListScreen(
+    items: List<UdsItem>,
+    onItemClick: (Int) -> Unit
+) {
+    Box(
+        Modifier
             .fillMaxSize()
-            .background(Color(0xFF1A1F2E))
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .background(DarkColor)
+            .padding(16.dp)
     ) {
-        Text(
-            text = "UDS Items",
-            color = Color.White,
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
+        Column {
+            Text(
+                text = "UDS Items",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
 
-        items.forEach { item ->
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.DarkGray, shape = MaterialTheme.shapes.medium)
-                    .padding(16.dp)
-                    .clickable { onItemClick(item.id) }
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(bottom = 24.dp)
             ) {
-                Text(text = item.name, color = Color.White, fontSize = 18.sp)
+                items(items) { item ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onItemClick(item.id) },
+                        shape = MaterialTheme.shapes.medium,
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    ) {
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(id = item.iconRes),
+                                contentDescription = "${item.name} icon",
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .padding(end = 12.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+
+                            Text(
+                                text = item.name,
+                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
             }
         }
-
-        Spacer(modifier = Modifier.height(32.dp))
-        Box(contentAlignment = Alignment.Center){
-            Button(onClick = {
-                val intent = Intent(context, MainActivity::class.java)
-                context.startActivity(intent)
-                (context as? UDSActivity)?.finish()
-            }) {
-                Text("Back", fontSize = 16.sp)
-            }
-        }
-
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun UdsListScreenPreview() {
     val sampleItems = listOf(
-        UdsItem(1, "Speed Sensor", "Monitors the speed of the vehicle."),
-        UdsItem(2, "Oil Temp Sensor", "Tracks engine oil temperature."),
-        UdsItem(3, "MAF Sensor", "Measures mass air flow into the engine.")
+        UdsItem(1, "Speed Sensor",    "Monitors speed",    R.drawable.carspeed1),
+        UdsItem(2, "Oil Temp Sensor", "Tracks oil temp",   R.drawable.thermometer1),
+        UdsItem(3, "MAF Sensor",      "Measures airflow",  R.drawable.airflow1)
     )
-    MaterialTheme {
+    ComposeSpeedTestTheme {
         UdsListScreen(items = sampleItems, onItemClick = {})
     }
 }
+
+
+

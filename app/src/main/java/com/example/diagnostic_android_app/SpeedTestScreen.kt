@@ -1,10 +1,14 @@
 package com.example.diagnostic_android_app
 
-import android.preference.PreferenceActivity.Header
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,7 +17,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.colorspace.WhitePoint
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
@@ -64,22 +67,26 @@ fun DashboardScreen2() {
     val state1 = animation1.toUiState(maxSpeed = 0f)
     val state2 = animation2.toUiState(maxSpeed = 0f)
 
-    // NOTE: DO NOT put NavigationView here. It is controlled by MainNavigation() outside.
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(DarkGradient)
     ) {
-        Header()
-        SpeedTestScreenHorizontal(state1, state2)
+        item {
+            SpeedTestScreenHorizontal(state1, state2)
+        }
+        item {
+            DiagnosticRow()
+        }
     }
 }
+
 
 @Composable
 fun SpeedTestScreenHorizontal(state1: UiState, state2: UiState) {
     Row(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth(0.8f)
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
@@ -109,18 +116,58 @@ fun SpeedTestScreenHorizontal(state1: UiState, state2: UiState) {
 @Composable
 fun SpeedValue(value: String) {
     Column(
-        Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("Speed", style = MaterialTheme.typography.caption)
         Text(
             text = value,
-            fontSize = 45.sp,
+            fontSize = 30.sp,
             color = Color.White,
             fontWeight = FontWeight.Bold
         )
         Text("mbps", style = MaterialTheme.typography.caption)
+    }
+}
+
+@Composable
+fun DiagnosticRow() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        DiagnosticItem(iconRes = R.drawable.carengine1, label = "Engine", value = "205°F")
+        DiagnosticItem(iconRes = R.drawable.battery2, label = "Battery", value = "13.5V")
+        DiagnosticItem(iconRes = R.drawable.error1, label = "Error log", value = "P0140")
+    }
+}
+
+@Composable
+fun DiagnosticItem(iconRes: Int, label: String, value: String) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(8.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = iconRes),
+            contentDescription = label,
+            tint = Color.White,
+            modifier = Modifier.size(24.dp)
+        )
+        Text(
+            text = label,
+            color = Color.White,
+            style = MaterialTheme.typography.caption
+        )
+        Text(
+            text = value,
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp
+        )
     }
 }
 
@@ -234,21 +281,7 @@ suspend fun updateData(animation: Animatable<Float, AnimationVector1D>, maxSpeed
 fun DefaultPreview() {
     MaterialTheme {
         Surface {
-            SpeedTestScreenHorizontal(
-                state1 = UiState(
-                    arcValue = 0.7f,
-                    speed = "120.5",
-                    ping = "5 ms",
-                    maxSpeed = "150.0 mbps"
-                ),
-                state2 = UiState(
-                    arcValue = 0.5f,
-                    speed = "95.3",
-                    ping = "7 ms",
-                    maxSpeed = "120.0 mbps"
-                )
-            )
-
+            DashboardScreen2()
         }
     }
 }

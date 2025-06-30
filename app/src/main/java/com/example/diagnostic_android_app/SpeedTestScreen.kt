@@ -137,10 +137,10 @@ fun SpeedTestScreenHorizontal(speed1: Float, speed2: Float) {
                     it.setSpeedometerColor(Color.Blue.toArgb())
                     it.trianglesColor = DarkColor2.toArgb()
                     it.indicator.width = 15f
+                    it.indicator.color = Color.White.toArgb() // Change needle color to white
                     it.speedTo(speed1.toFloat(), 2000) // Ensure speed is set after config
                 }
             }
-
         }
 
         Box(
@@ -182,6 +182,7 @@ fun SpeedTestScreenHorizontal(speed1: Float, speed2: Float) {
                     it.setSpeedometerColor(Color.Blue.toArgb())
                     it.trianglesColor = DarkColor2.toArgb()
                     it.indicator.width = 15f
+                    it.indicator.color = Color.White.toArgb() // Change needle color to white
                     it.speedTo(speed2.toFloat(), 2000) // Ensure speed is set after config
                 }
             }
@@ -229,10 +230,7 @@ fun DiagnosticItem(iconRes: Int, label: String, value: String) {
 }
 
 @Composable
-fun NavigationView(
-    selectedItem: Int,
-    onItemSelected: (Int) -> Unit
-) {
+fun NavigationView(selectedItem: Int,onItemSelected: (Int) -> Unit) {
     val items = listOf(
         R.drawable.speed2,
         R.drawable.msg2

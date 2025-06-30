@@ -47,7 +47,7 @@ fun UdsDetailScreen(item: UdsItem, onBack: () -> Unit) {
         Spacer(modifier = Modifier.height(32.dp))
         Button(
             onClick = onBack,
-            colors = ButtonDefaults.buttonColors(containerColor = BlueSoftColor)
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3533CD))
         ) {
             Text("Back", fontSize = 16.sp)
         }

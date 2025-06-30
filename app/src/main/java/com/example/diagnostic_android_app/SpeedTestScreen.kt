@@ -1,13 +1,5 @@
 package com.example.diagnostic_android_app
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
-import androidx.compose.animation.core.CubicBezierEasing
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.keyframes
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,7 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -31,58 +22,11 @@ import com.example.diagnostic_android_app.ui.theme.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
+import com.github.anastr.speedometer.AwesomeSpeedometer
 import com.github.anastr.speedviewlib.AwesomeSpeedometer
-import kotlinx.coroutines.launch
-import kotlin.math.floor
-import kotlin.math.roundToInt
-import kotlin.random.Random
-import java.lang.Float.max
-
-suspend fun startAnimation(animation: Animatable<Float, AnimationVector1D>) {
-    animation.animateTo(0.84f, keyframes {
-        durationMillis = 9000
-        0f at 0 with CubicBezierEasing(0f, 1.5f, 0.8f, 1f)
-        0.72f at 1000 with CubicBezierEasing(0.2f, -1.5f, 0f, 1f)
-        0.76f at 2000
-        0.78f at 3000
-        0.82f at 4000
-        0.85f at 5000
-        0.89f at 6000
-        0.82f at 7500 with LinearOutSlowInEasing
-    })
-}
-
-fun Animatable<Float, AnimationVector1D>.toUiState(maxSpeed: Float) = UiState(
-    arcValue = value,
-    speed = "%.1f".format(value * 100),
-    ping = if (value > 0.2f) "${(value * 15).roundToInt()} ms" else "-",
-    maxSpeed = if (maxSpeed > 0f) "%.1f mbps".format(maxSpeed) else "-",
-    inProgress = isRunning
-)
 
 @Composable
-fun DashboardScreen2() {
-    val animation1 = remember { Animatable(0f) }
-    val animation2 = remember { Animatable(0f) }
-    val coroutineScope = rememberCoroutineScope()
-    var speed1 by remember { mutableStateOf(0f) }
-    var speed2 by remember { mutableStateOf(0f) }
-    val currentSpeed1 by animateFloatAsState(
-        targetValue = speed1,
-        animationSpec = tween(durationMillis = 2000, easing = FastOutSlowInEasing)
-    )
-    val currentSpeed2 by animateFloatAsState(
-        targetValue = speed2,
-        animationSpec = tween(durationMillis = 2000, easing = FastOutSlowInEasing)
-    )
-
-    LaunchedEffect(Unit) {
-        coroutineScope.launch { startAnimation(animation1) }
-        coroutineScope.launch { startAnimation(animation2) }
-        speed1 = animation1.value * 100
-        speed2 = animation2.value * 100
-    }
-
+fun DashboardScreen2(speed1: Float, speed2: Float, config1: SpeedometerConfig, config2: SpeedometerConfig) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -95,50 +39,86 @@ fun DashboardScreen2() {
             )
     ) {
         item {
-            SpeedTestScreenHorizontal(currentSpeed1, currentSpeed2)
+            SpeedTestScreenHorizontal(speed1, speed2, config1, config2)
         }
         item {
             DiagnosticRow()
-
         }
     }
 }
 
 @Composable
-fun SpeedTestScreenHorizontal(speed1: Float, speed2: Float) {
+fun SpeedometerComposable(speed: Float, config: SpeedometerConfig) {
+    var speedometer by remember { mutableStateOf<AwesomeSpeedometer?>(null) }
+    var lastSpeed by remember { mutableStateOf<Float?>(null) }
+
+    AndroidView(
+        factory = { context ->
+            AwesomeSpeedometer(context).apply {
+                minSpeed = config.minSpeed
+                maxSpeed = config.maxSpeed
+                speedTo(0f, 0)
+            }.also { speedometer = it }
+        },
+        modifier = Modifier.size(220.dp),
+        update = { view ->
+            // Only update if speed is new
+            if (lastSpeed != speed) {
+                lastSpeed = speed
+                view.speedTo(speed, 1000) // optional: set duration
+            }
+        }
+    )
+
+    LaunchedEffect(speedometer, config) {
+        speedometer?.apply {
+            setSpeedometerColor(config.color.toArgb())
+            trianglesColor = DarkColor2.toArgb()
+            indicator.width = 15f
+            indicator.color = Color.White.toArgb()
+            minSpeed = config.minSpeed
+            maxSpeed = config.maxSpeed
+        }
+    }
+}
+
+
+@Composable
+fun SpeedTestScreenHorizontal(speed1: Float, speed2: Float, config1: SpeedometerConfig, config2: SpeedometerConfig) {
     Row(
         modifier = Modifier
-            .fillMaxWidth(1f)
+            .fillMaxWidth()
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
-            modifier = Modifier
-                .weight(1f),
+            modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             var speedometer by remember { mutableStateOf<AwesomeSpeedometer?>(null) }
             AndroidView(
                 factory = { context ->
                     AwesomeSpeedometer(context).apply {
-                        // Initial setup with minimal configuration
-                        speedTo(0f, 0) // Set initial speed to avoid immediate gradient update
+                        minSpeed = config1.minSpeed
+                        maxSpeed = config1.maxSpeed
+                        speedTo(0f, 0)
                     }.also { speedometer = it }
                 },
                 modifier = Modifier.size(220.dp),
                 update = { view ->
-                    view.speedTo(speed1.toFloat(), 2000)
+                    view.speedTo(speed1, 0)
                 }
             )
-            // Apply configurations after view is created
-            LaunchedEffect(speedometer) {
+            LaunchedEffect(speedometer, config1, speed1) {
                 speedometer?.let {
-                    it.setSpeedometerColor(Color.Blue.toArgb())
+                    it.setSpeedometerColor(config1.color.toArgb())
                     it.trianglesColor = DarkColor2.toArgb()
                     it.indicator.width = 15f
-                    it.indicator.color = Color.White.toArgb() // Change needle color to white
-                    it.speedTo(speed1.toFloat(), 2000) // Ensure speed is set after config
+                    it.indicator.color = Color.White.toArgb()
+                    it.minSpeed = config1.minSpeed
+                    it.maxSpeed = config1.maxSpeed
+                    it.speedTo(speed1, 0)
                 }
             }
         }
@@ -161,34 +141,38 @@ fun SpeedTestScreenHorizontal(speed1: Float, speed2: Float) {
         }
 
         Column(
-            modifier = Modifier
-                .weight(1f),
+            modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             var speedometer2 by remember { mutableStateOf<AwesomeSpeedometer?>(null) }
             AndroidView(
                 factory = { context ->
                     AwesomeSpeedometer(context).apply {
-                        speedTo(0f, 0) // Initial speed to avoid gradient crash
+                        minSpeed = config2.minSpeed
+                        maxSpeed = config2.maxSpeed
+                        speedTo(0f, 0)
                     }.also { speedometer2 = it }
                 },
                 modifier = Modifier.size(220.dp),
                 update = { view ->
-                    view.speedTo(speed2.toFloat(), 2000)
+                    view.speedTo(speed2, 0)
                 }
             )
-            LaunchedEffect(speedometer2) {
+            LaunchedEffect(speedometer2, config2, speed2) {
                 speedometer2?.let {
-                    it.setSpeedometerColor(Color.Blue.toArgb())
+                    it.setSpeedometerColor(config2.color.toArgb())
                     it.trianglesColor = DarkColor2.toArgb()
                     it.indicator.width = 15f
-                    it.indicator.color = Color.White.toArgb() // Change needle color to white
-                    it.speedTo(speed2.toFloat(), 2000) // Ensure speed is set after config
+                    it.indicator.color = Color.White.toArgb()
+                    it.minSpeed = config2.minSpeed
+                    it.maxSpeed = config2.maxSpeed
+                    it.speedTo(speed2, 0)
                 }
             }
         }
     }
 }
+
 @Composable
 fun DiagnosticRow() {
     Row(
@@ -230,12 +214,8 @@ fun DiagnosticItem(iconRes: Int, label: String, value: String) {
 }
 
 @Composable
-fun NavigationView(selectedItem: Int,onItemSelected: (Int) -> Unit) {
-    val items = listOf(
-        R.drawable.speed2,
-        R.drawable.msg2
-    )
-
+fun NavigationView(selectedItem: Int, onItemSelected: (Int) -> Unit) {
+    val items = listOf(R.drawable.speed2, R.drawable.msg2)
     BottomNavigation(backgroundColor = DarkColor) {
         items.mapIndexed { index, item ->
             BottomNavigationItem(
@@ -243,17 +223,10 @@ fun NavigationView(selectedItem: Int,onItemSelected: (Int) -> Unit) {
                 onClick = { onItemSelected(index) },
                 selectedContentColor = Color.Blue,
                 unselectedContentColor = Color.LightGray,
-                icon = {
-                    Icon(painterResource(id = item), contentDescription = null)
-                }
+                icon = { Icon(painterResource(id = item), contentDescription = null) }
             )
         }
     }
-}
-
-suspend fun updateData(animation: Animatable<Float, AnimationVector1D>, maxSpeed: MutableState<Float>) {
-    animation.snapTo(0.9f) // Instant update without animation
-    maxSpeed.value = max(maxSpeed.value, animation.value * 100f)
 }
 
 @Preview(showBackground = true, widthDp = 800, heightDp = 400)
@@ -261,7 +234,12 @@ suspend fun updateData(animation: Animatable<Float, AnimationVector1D>, maxSpeed
 fun DefaultPreview() {
     MaterialTheme {
         Surface {
-            DashboardScreen2()
+            DashboardScreen2(
+                speed1 = 0f,
+                speed2 = 0f,
+                config1 = SpeedometerConfig(),
+                config2 = SpeedometerConfig()
+            )
         }
     }
 }

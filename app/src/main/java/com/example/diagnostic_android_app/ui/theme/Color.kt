@@ -22,6 +22,7 @@ val Green500 = Color(0xFF07A312)
 
 val DarkColor = Color(0xFF101522)
 val DarkColor2 = Color(0xFF202532)
+
 val LightColor = Color(0xFF414D66)
 val LightColor2 = Color(0xFF626F88)
 
@@ -40,3 +41,9 @@ val BlueSoftColor = Color(0xFF00F0FF)
 val DarkGradient = Brush.verticalGradient(
     colors = listOf(DarkColor2, DarkColor)
 )
+
+val DarkGradient2 = Brush.verticalGradient(
+    colors = listOf(DarkColor2, DarkColor)
+)
+
+

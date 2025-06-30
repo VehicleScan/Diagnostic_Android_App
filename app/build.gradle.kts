@@ -46,6 +46,8 @@ android {
 }
 
 dependencies {
+    implementation("com.github.anastr:speedometer-android:1.0.0-ALPHA02")
+
     // Compose BOM
     val composeBom = platform("androidx.compose:compose-bom:2024.02.01")
     implementation(composeBom)
@@ -61,6 +63,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material:material-icons-extended:1.4.3")
     implementation("androidx.compose.material:material-icons-extended")
+    implementation ("io.coil-kt:coil-compose:2.4.0")
 
     // Navigation & activity support
     implementation("androidx.navigation:navigation-compose:2.7.0")

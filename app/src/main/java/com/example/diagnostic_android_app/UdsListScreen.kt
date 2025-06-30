@@ -18,6 +18,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,14 +40,23 @@ fun UdsListScreen(
     Box(
         Modifier
             .fillMaxSize()
-            .background(DarkColor)
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color(0xFF3533CD), // #3533cd
+                        Color(0xFF000000)  // #000000
+                    ),
+                    start = Offset(0f, 0f),
+                    end = Offset(0f, Float.POSITIVE_INFINITY)
+                )
+                )
             .padding(16.dp)
     ) {
         Column {
             Text(
-                text = "UDS Items",
+                text = "DTCs Items",
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
@@ -88,7 +99,7 @@ fun UdsListScreen(
         }
     }
 }
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 800, heightDp = 400)
 @Composable
 fun UdsListScreenPreview() {
     val sampleItems = listOf(

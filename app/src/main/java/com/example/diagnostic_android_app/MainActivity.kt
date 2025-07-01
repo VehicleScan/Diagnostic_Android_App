@@ -1,61 +1,66 @@
 package com.example.diagnostic_android_app
 
 import android.content.pm.ActivityInfo
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavType
-import androidx.navigation.compose.*
-import androidx.navigation.navArgument
-import com.example.diagnostic_android_app.ui.theme.ComposeSpeedTestTheme
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.lang.Thread.sleep
+import kotlin.random.Random
 
 data class SpeedometerConfig(
     val minSpeed: Float = 0f,
     val maxSpeed: Float = 100f,
-    val color: Color = Color.Blue
+    val color: Int = Color.BLUE
 )
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+    private lateinit var navController: NavController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         hideSystemBars()
-
-        // Restore state if available
-        if (savedInstanceState != null) {
-            speed1.value = savedInstanceState.getFloat("speed1", 0f)
-            speed2.value = savedInstanceState.getFloat("speed2", 0f)
-        } else {
-            // Initialize values only on first creation
-            lifecycleScope.launch {
-                updateSpeedometer(1, 84f)
-                updateSpeedometer(2, 50f)
-
+        setContentView(R.layout.activity_main)
+        lifecycleScope.launch {
+            while (true) {
+                updateSpeedometer(
+                    1,
+                    Random.nextFloat() * (config1.maxSpeed - config1.minSpeed) + config1.minSpeed
+                )
+                updateSpeedometer(
+                    2,
+                    Random.nextFloat() * (config2.maxSpeed - config2.minSpeed) + config2.minSpeed
+                )
+                kotlinx.coroutines.delay(5000) // ✅ Non-blocking delay
             }
         }
 
-        setContent {
-            ComposeSpeedTestTheme {
-                MainNavigation()
-            }
+
+
+
+        // Setup Navigation
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
+        if (navHostFragment == null) {
+            Log.e("MainActivity", "NavHostFragment with ID nav_host_fragment not found")
+            return // Prevent crash, handle error gracefully
         }
+        navController = navHostFragment.navController
+
+        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigation.setupWithNavController(navController)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putFloat("speed1", speed1.value)
-        outState.putFloat("speed2", speed2.value)
-    }
 
     private fun hideSystemBars() {
         if (packageManager.hasSystemFeature("android.hardware.type.automotive")) {
@@ -70,91 +75,25 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // Function to update individual speedometer
     fun updateSpeedometer(index: Int, newSpeed: Float) {
-        lifecycleScope.launch {
-            when (index) {
-                1 -> speed1.value = newSpeed
-                2 -> speed2.value = newSpeed
-            }
-        }
+        updateSpeed(index, newSpeed)
     }
 
-    // Store speedometer states (made accessible for updateSpeedometer)
+
     companion object {
-        val speed1 = mutableStateOf(0f)
-        val speed2 = mutableStateOf(0f)
-        val config1 = mutableStateOf(SpeedometerConfig())
-        val config2 = mutableStateOf(SpeedometerConfig())
-    }
-}
+        private val _speed1Flow = MutableStateFlow(0f)
+        private val _speed2Flow = MutableStateFlow(0f)
 
-@Composable
-fun MainNavigation() {
-    val navController = rememberNavController()
-    val selectedItem = remember { mutableStateOf(0) }
+        val speed1Flow: StateFlow<Float> get() = _speed1Flow
+        val speed2Flow: StateFlow<Float> get() = _speed2Flow
 
-    Scaffold(
-        bottomBar = {
-            NavigationView(
-                selectedItem = selectedItem.value,
-                onItemSelected = { index ->
-                    selectedItem.value = index
-                    when (index) {
-                        0 -> {
-                            navController.navigate("home") {
-                                popUpTo("home") { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        }
-                        1 -> navController.navigate("uds_list") {
-                            popUpTo("uds_list") { inclusive = true }
-                            launchSingleTop = true
-                        }
-                    }
-                }
-            )
-        }
-    ) { padding ->
-        NavHost(
-            navController = navController,
-            startDestination = "home",
-            modifier = Modifier.padding(padding)
-        ) {
-            composable("home") {
-                DashboardScreen2(
-                    speed1 = MainActivity.speed1.value,
-                    speed2 = MainActivity.speed2.value,
-                    config1 = MainActivity.config1.value,
-                    config2 = MainActivity.config2.value
-                )
-            }
+        val config1 = SpeedometerConfig()
+        val config2 = SpeedometerConfig()
 
-            composable("uds_list") {
-                val items = listOf(
-                    UdsItem(1, "Speed Sensor", "Monitors speed", R.drawable.carspeed1),
-                    UdsItem(2, "Oil Temp Sensor", "Tracks oil temp", R.drawable.thermometer1),
-                    UdsItem(3, "MAF Sensor", "Measures airflow", R.drawable.airflow1)
-                )
-                UdsListScreen(items) { selectedId ->
-                    navController.navigate("uds_detail/$selectedId")
-                }
-            }
-
-            composable(
-                route = "uds_detail/{itemId}",
-                arguments = listOf(navArgument("itemId") { type = NavType.IntType })
-            ) { backStackEntry ->
-                val itemId = backStackEntry.arguments!!.getInt("itemId")
-                val item = listOf(
-                    UdsItem(1, "Speed Sensor", "Monitors speed", R.drawable.carspeed1),
-                    UdsItem(2, "Oil Temp Sensor", "Tracks oil temp", R.drawable.thermometer1),
-                    UdsItem(3, "MAF Sensor", "Measures airflow", R.drawable.airflow1)
-                ).first { it.id == itemId }
-
-                UdsDetailScreen(item) {
-                    navController.popBackStack()
-                }
+        fun updateSpeed(index: Int, value: Float) {
+            when (index) {
+                1 -> _speed1Flow.value = value
+                2 -> _speed2Flow.value = value
             }
         }
     }

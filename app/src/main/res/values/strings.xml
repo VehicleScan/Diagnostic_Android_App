@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">Vehicle Scan</string>
     <string name="title_activity_udsactivity">UDSActivity</string>
+    <string name="app_logo">App Logo</string>
+    <string name="engine">Engine</string>
+    <string name="battery">Battery</string>
+    <string name="error_log">Error Log</string>
+    <string name="dtc_items">DTCs Items</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="uds_list">UDS List</string>
+    <string name="back">Back</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -13,4 +13,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="Temperature">Temperature</string>
     <string name="TirePressure">Tire pressure</string>
+    <string name="needs_garage_support">The car need to visit the garage for support</string>
+    <string name="no_garage_support">No need  to visit the garage for support</string>
 </resources>

@@ -14,7 +14,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.lang.Thread.sleep
 import kotlin.random.Random
 
 data class SpeedometerConfig(
@@ -31,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         hideSystemBars()
         setContentView(R.layout.activity_main)
+
         lifecycleScope.launch {
             while (true) {
                 updateSpeedometer(
@@ -41,60 +41,48 @@ class MainActivity : AppCompatActivity() {
                     2,
                     Random.nextFloat() * (config2.maxSpeed - config2.minSpeed) + config2.minSpeed
                 )
-                kotlinx.coroutines.delay(5000) // ✅ Non-blocking delay
+                kotlinx.coroutines.delay(5000)
             }
         }
 
-
-
-
-        // Setup Navigation
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
         if (navHostFragment == null) {
-            Log.e("MainActivity", "NavHostFragment with ID nav_host_fragment not found")
-            return // Prevent crash, handle error gracefully
+            Log.e("MainActivity", "NavHostFragment not found")
+            return
         }
         navController = navHostFragment.navController
 
-        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNavigation.setupWithNavController(navController)
+        findViewById<BottomNavigationView>(R.id.bottom_navigation)
+            ?.setupWithNavController(navController)
     }
-
 
     private fun hideSystemBars() {
         if (packageManager.hasSystemFeature("android.hardware.type.automotive")) {
-            window.decorView.systemUiVisibility = (
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            or View.SYSTEM_UI_FLAG_FULLSCREEN
-                            or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    )
+            window.decorView.systemUiVisibility =
+                (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         }
     }
 
     fun updateSpeedometer(index: Int, newSpeed: Float) {
-        updateSpeed(index, newSpeed)
+        when (index) {
+            1 -> _speed1Flow.value = newSpeed
+            2 -> _speed2Flow.value = newSpeed
+        }
     }
-
 
     companion object {
         private val _speed1Flow = MutableStateFlow(0f)
         private val _speed2Flow = MutableStateFlow(0f)
-
         val speed1Flow: StateFlow<Float> get() = _speed1Flow
         val speed2Flow: StateFlow<Float> get() = _speed2Flow
 
         val config1 = SpeedometerConfig()
         val config2 = SpeedometerConfig()
-
-        fun updateSpeed(index: Int, value: Float) {
-            when (index) {
-                1 -> _speed1Flow.value = value
-                2 -> _speed2Flow.value = value
-            }
-        }
     }
 }

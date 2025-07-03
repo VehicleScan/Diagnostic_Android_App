@@ -6,6 +6,7 @@ data class UdsItem(
     val id: Int,
     val name: String,
     val details: String,
+
     @DrawableRes val iconRes: Int
 )
 

@@ -66,15 +66,17 @@
             <ImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:src="@drawable/carengine1"
+                android:src="@drawable/thermometer1"
                 android:contentDescription="@string/engine" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/engine"
+                android:text="@string/Temperature"
                 android:textColor="#FFFFFF"
                 android:textSize="12sp" />
+
             <TextView
+                android:id="@+id/temperature_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="205°F"
@@ -102,7 +104,9 @@
                 android:text="@string/battery"
                 android:textColor="#FFFFFF"
                 android:textSize="12sp" />
+
             <TextView
+                android:id="@+id/BatteryLevel_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="13.5V"
@@ -119,18 +123,21 @@
             android:orientation="vertical"
             android:gravity="center"
             android:padding="8dp">
+
             <ImageView
                 android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/error1"
-                android:contentDescription="@string/error_log" />
+                android:layout_height="36dp"
+                android:contentDescription="@string/TirePressure"
+                android:src="@drawable/wheelpressure2" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/error_log"
+                android:text="@string/TirePressure"
                 android:textColor="#FFFFFF"
                 android:textSize="12sp" />
+
             <TextView
+                android:id="@+id/TirePressure_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="P0140"

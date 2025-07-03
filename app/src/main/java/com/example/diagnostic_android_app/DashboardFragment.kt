@@ -53,6 +53,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
                         speedometer2?.speedTo(newSpeed)
                     }
                 }
+
             }
         }
     }

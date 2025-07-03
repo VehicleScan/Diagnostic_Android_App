@@ -11,4 +11,6 @@
     <string name="back">Back</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="Temperature">Temperature</string>
+    <string name="TirePressure">Tire pressure</string>
 </resources>

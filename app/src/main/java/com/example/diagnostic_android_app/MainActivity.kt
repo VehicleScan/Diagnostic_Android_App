@@ -81,7 +81,6 @@ class MainActivity : AppCompatActivity() {
         private val _speed2Flow = MutableStateFlow(0f)
         val speed1Flow: StateFlow<Float> get() = _speed1Flow
         val speed2Flow: StateFlow<Float> get() = _speed2Flow
-
         val config1 = SpeedometerConfig()
         val config2 = SpeedometerConfig()
     }

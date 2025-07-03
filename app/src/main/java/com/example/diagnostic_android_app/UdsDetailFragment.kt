@@ -8,16 +8,10 @@ import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 
 class UdsDetailFragment : Fragment(R.layout.fragment_uds_detail) {
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val itemId = arguments?.getInt("itemId") ?: 1
-        val item = listOf(
-            UdsItem(1, "Speed Sensor", "Monitors speed", R.drawable.carspeed1),
-            UdsItem(2, "Oil Temp Sensor", "Tracks oil temp", R.drawable.thermometer1),
-            UdsItem(3, "MAF Sensor", "Measures airflow", R.drawable.airflow1)
-        ).first { it.id == itemId }
-
+        val item = UdsData.items.first { it.id == itemId }
         view.findViewById<TextView>(R.id.name)?.text = item.name
         view.findViewById<TextView>(R.id.details)?.text = item.details
         view.findViewById<Button>(R.id.back_button)
